@@ -2,6 +2,7 @@ const apiUrl = 'http://localhost:5000/api/v1';
 const questionsurl = `${apiUrl}/questions`;
 const myquestionsurl = `${apiUrl}/user_questions`;
 
+
 const questions = {
 
     getAll: (url) => {
@@ -36,7 +37,12 @@ const questions = {
                       console.log(`Fetch Error: ${err}`);
                     });
                 }
+
 }
+
+window.onload = () => {questions.getAll(questionsurl);
+                      questions.myQuestions(myquestionsurl);
+                    }
 
 const answers = { 
 
@@ -87,11 +93,6 @@ const answers = {
 }
   
 
-window.onload = () => {
-  questions.getAll(questionsurl);
-  questions.myQuestions(myquestionsurl);
-}
-  
 
 const DeleteQuestion = {
   
@@ -322,7 +323,12 @@ createQuestion = document.getElementById('postquestion').addEventListener('click
                   .catch(err => {
                     console.log(`Fetch Error: ${err}`);
                   });
-              });
+})
+
+
+
+
+                
 
 
 

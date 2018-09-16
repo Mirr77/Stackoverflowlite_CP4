@@ -240,7 +240,7 @@ section.sec1{
 .card.stats{
     box-shadow: 0 2px 4px 0 rgba(154, 160, 189, 0.1);
     transition: 0.3s;
-    background: #3498db;
+    background: #d5dadd;
 }
 
 .card:hover {
