@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand:500">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+  
+
+    <title>Ask a question</title>
+</head>
+
+<body class="index">
+    <!-- navigation bar -->
+    <div class="wrapper">
+            <nav>
+                <a class="logo" href="questions.html">STACKOVERFLOWLITE</a>
+                <ul>
+                    <li><a href="questions.html">QUESTIONS</a></li>
+                    <li><a href="myaccount.html">My Account</a></li>
+                    <li><a href="index.html" class="active logout">Logout</a></li>
+                </ul>
+            </nav>
+            <section class="sec1"></section>
+    </div>
+    <!--ask a question form -->
+    <div class="container ask">
+            <h1>ASK A QUESTION</h1>
+            <form>
+                <div class="form-data">
+                    <textarea class="ask" rows="8" cols="50" name="question" form="questionform" id="description"> Type your question here...</textarea>
+                </div>
+                <input class="answer-button" type="submit" id="postquestion" value="SUBMIT" >
+            </form>
+    </div>
+    <script src="./js/questions.js"></script>
+</body>
+
+</html>
