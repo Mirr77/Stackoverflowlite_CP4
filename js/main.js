@@ -5,10 +5,5 @@ $(window).on('scroll', function(){
     else {
         $('nav').removeClass('blue');
     }
-})
-
-$(document).ready(function(){
-    $("button.delete.question").on('click', function(){
-        $(".popup").fadeIn('slow');
-    });
 });
+
