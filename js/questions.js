@@ -30,6 +30,9 @@ const questions = {
                     .then(response => response.json())
                     .then(data => {
                       console.log('REs-data:', data);
+                      if(data.message == 'Your token has expired. Please log in to continue' ){
+                        window.location.href = "unauthorized.html";
+                      }
                       
                       mapelements.mapMyQuestions(data.questions);
                     })

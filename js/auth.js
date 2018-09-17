@@ -52,22 +52,23 @@ const auth = {
               });
             }),
 
-  logoutRequest: $(document).on('click', '.active.logout', function (url) {
-                fetch(logouturl, {
-                        method:'POST',
-                        headers:{"Authorization":localStorage.getItem('token') }
-                      })
-                        .then((response) => response.json())
-                        .then(data => {
-                          // Show notification message then redirect to login page
-                          console.log('REs-data:', data);
-                          window.location.href = 'index.html';
-                
+  logoutRequest:document.getElementById('.active.logout').addEventListener('click', async(event) => {
+                  event.preventDefault();
+                  fetch(logouturl, {
+                          method:'POST',
+                          headers:{"Authorization":localStorage.getItem('token')}
                         })
-                        .catch(err => {
-                          console.log(`Fetch Error: ${err}`);
-                        });
-                    })
+                          .then((response) => response.json())
+                          .then(data => {
+                            // Show notification message then redirect to login page
+                            console.log('REs-data:', data);
+                            window.location.href = 'index.html';
+                  
+                          })
+                          .catch(err => {
+                            console.log(`Fetch Error: ${err}`);
+                          });
+                      })
   }
 
 
