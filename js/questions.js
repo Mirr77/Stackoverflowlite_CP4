@@ -9,42 +9,46 @@ const questions = {
               fetch(questionsurl, {
                 method: 'GET',
                 headers: {"Authorization":localStorage.getItem('token') }
-              })
-                .then(response => response.json())
-                .then(data => {
+                  })
+              .then(response => response.json())
+              .then(data => {
+                if(data.message == 'Your token has expired. Please log in to continue' ){
+                    window.location.href = "index.html";
+                  }
                   // Call function to map items to a html element
-                  console.log('REs-data:', data);
+                console.log('REs-data:', data);
                   
-                  mapelements.mapAllQuestions(data.questions);
-                })
-                .catch(err => {
-                  console.log(`Fetch Error: ${err}`);
-                });
+                mapelements.mapAllQuestions(data.questions);
+                  })
+              .catch(err => {
+                console.log(`Fetch Error: ${err}`);
+                  });
             },
 
     myQuestions: (url) => {
                   fetch(myquestionsurl, {
                     method: 'GET',
                     headers: { Authorization: localStorage.getItem('token') }
-                  })
-                    .then(response => response.json())
-                    .then(data => {
-                      console.log('REs-data:', data);
-                      if(data.message == 'Your token has expired. Please log in to continue' ){
-                        window.location.href = "unauthorized.html";
+                      })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log('REs-data:', data);
+                    if(data.message == 'Your token has expired. Please log in to continue' ){
+                      window.location.href = "index.html";
                       }
                       
-                      mapelements.mapMyQuestions(data.questions);
+                    mapelements.mapMyQuestions(data.questions);
                     })
-                    .catch(err => {
-                      console.log(`Fetch Error: ${err}`);
+                  .catch(err => {
+                    console.log(`Fetch Error: ${err}`);
                     });
                 }
 
-}
+};
 
 window.onload = () => {questions.getAll(questionsurl);
                       questions.myQuestions(myquestionsurl);
+                      getdata(profileUrl);
                     }
 
 const answers = { 
@@ -62,6 +66,9 @@ const answers = {
                         })
                     .then((response) => response.json())
                     .then(data => {
+                      if(data.message == 'Your token has expired. Please log in to continue' ){
+                        window.location.href = "index.html";
+                      }
                         console.log(data);
                         mapelements.mapAnswers(data.answers);
                         })
@@ -86,6 +93,9 @@ const answers = {
                       })
                     .then((response) => response.json())
                     .then(data => {
+                        if(data.message == 'Your token has expired. Please log in to continue' ){
+                          window.location.href = "index.html";
+                        }
                         console.log(data.answers);
                         window.location= "questions.html";
                         })
@@ -93,9 +103,7 @@ const answers = {
                         console.log(`Fetch Error: ${err}`);
                         });
                     })
-}
-  
-
+};
 
 const DeleteQuestion = {
   
@@ -135,7 +143,10 @@ const DeleteQuestion = {
               })
               .then((response) => response.json())
               .then(data => {
-                  if(data.message == "Deleted successfully"){
+                if(data.message == 'Your token has expired. Please log in to continue' ){
+                  window.location.href = "index.html";
+                }
+                else if(data.message == "Deleted successfully"){
                       document.getElementById('delete-message').innerHTML=data.message;
                       window.location.href = "myaccount.html";
                       }
@@ -145,7 +156,7 @@ const DeleteQuestion = {
                     console.log(`Fetch Error: ${err}`);
                   });
                 })
-  }
+  };
   
 
 const DeleteAnswer = {
@@ -186,27 +197,59 @@ const DeleteAnswer = {
               let answer_id = $(this).attr('id')
 
               fetch(`${apiUrl}/questions/${question_id}/answers/${answer_id}`, {
-                method: 'DELETE',
-                headers: {"Authorization":localStorage.getItem('token') }
-                })
+                  method: 'DELETE',
+                  headers: {"Authorization":localStorage.getItem('token') }
+                  })
               .then((response) => response.json())
               .then(data => {
-                  if(data.message == "successfully deleted the answer"){
-                    document.getElementById('delete-answer-message').innerHTML=data.message;
-                    window.location.href = "questions.html";
-                    }
-                    console.log(data.message);
-                  })
+                  if(data.message == 'Your token has expired. Please log in to continue' ){
+                    window.location.href = "index.html";
+                  }
+                  else if(data.message == "successfully deleted the answer"){
+                      document.getElementById('delete-answer-message').innerHTML=data.message;
+                      window.location.href = "questions.html";
+                      }
+                      console.log(data.message);
+                    })
               .catch(err => {
                   console.log(`Fetch Error: ${err}`);
                   });
               })
-    }
+    };
 
-const edit = {
+const editQuestion = {
 
-    editquestion: $(document).on('click', '.button.edit', 
+    popup: $(document).on('click', '.button.edit.question', 
+
+              function showpopup(url){
+              let id = $(this).attr('id')
+              let description = $(this).attr('description')
+
+              $('.edit-button').attr('id',id);
+              $('.description').html(description);
+                  
+              $(".cover").fadeIn('slow');
+              $(".container.edit").fadeIn('slow');
+              }  
+              ), 
+    
+    cancelpopup: $(document).ready( function(){
+                  $('.container.edit').on('click', function(){
+                    if($(event.target).is("#close")){
+                      $(".cover").fadeOut('slow');
+                      $(".container.edit").fadeOut('slow');
+                      }
+                      });
+                  
+                      $('.cover').on('click', function(){
+                      $(".cover").fadeOut('slow');
+                      $(".container.edit").fadeOut('slow');
+                      });
+                    }),         
+
+    editquestion: $(document).on('click', '.edit-button', 
                   function editQuestion(url){
+                  
                   let id = $(this).attr('id')
                   let description = document.getElementById('description').value;
 
@@ -219,8 +262,7 @@ const edit = {
                   .then((response) => response.json())
                   .then(data => {
                         if(data.message == "Successfully updated the question"){
-                          document.getElementById('edit-message').innerHTML=data.message;
-                          window.location.replace("http://127.0.0.1:8080/myaccount.html");
+                          window.location.href = "myaccount.html";
                         }
                         console.log(data.message);
                       })
@@ -228,7 +270,63 @@ const edit = {
                         console.log(`Fetch Error: ${err}`);
                       });
                   })
-}
+};
+
+const editanswer = {
+
+    popup: $(document).on('click', '.button.edit.answer', 
+            function showpopup(url){
+            let id = $(this).attr('id')
+            let name = $(this).attr('name')
+            let description = $(this).attr('description')
+
+            $('.edit-button').attr('id',id);
+            $('.edit-button').attr('name', name);
+            $('.description').html(description);
+                
+            $(".cover").fadeIn('slow');
+            $(".container.edit").fadeIn('slow');
+            }  
+            ), 
+
+    cancelpopup: $(document).ready( function(){
+                 $('.container.edit').on('click', function(){
+                 if($(event.target).is("#close")){
+                    $(".cover").fadeOut('slow');
+                    $(".container.edit").fadeOut('slow');
+                    }
+                    });
+                
+                    $('.cover').on('click', function(){
+                    $(".cover").fadeOut('slow');
+                    $(".container.edit").fadeOut('slow');
+                    });
+                  }),         
+
+    editanswer: $(document).on('click', '.edit-button', 
+                  function editAnswer(url){
+                  let question_id = $(this).attr('name')
+                  let answer_id = $(this).attr('id')
+                  
+                  let answer = document.getElementById('description').value;
+
+                  fetch(`${apiUrl}/questions/${question_id}/answers/${answer_id}`, {
+                      method: 'PUT',
+                      headers: {"Authorization":localStorage.getItem('token') },
+                      body: JSON.stringify({
+                        "answer":answer})
+                      })
+                  .then((response) => response.json())
+                  .then(data => {
+                        console.log(data.message);
+                        window.location.reload();
+                      })
+                  .catch(err => {
+                        console.log(`Fetch Error: ${err}`);
+                      });
+                  })
+};
+
 
 const mapelements = {
 
@@ -252,7 +350,7 @@ const mapelements = {
                 data.forEach(answer => {
                   let user_id = localStorage.getItem('user_id')
 
-                  if( user_id == answer.user_id){
+                  if(user_id == answer.user_id){
 
                   const element = `
 
@@ -264,7 +362,7 @@ const mapelements = {
                             <p>Posted by: ${answer.posted_by}</p>
                         </h6>
                         <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}">Delete</button>
-                        <button class="button edit answer" id="${answer.answer_id} name="${answer.question_id}">Edit</button>
+                        <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" description="${answer.answer_description}">Edit</button>
                   </div>`;
 
                   $('.answers-container').append(element);
@@ -295,7 +393,7 @@ const mapelements = {
                         <p> ${question.question_description}? </p>
                           <h6>
                               <button class="button delete question" id="${question.question_id}">Delete</button>
-                              <button class="button edit question" id="${question.question_id}">Edit</button>                         
+                              <button class="button edit question" id="${question.question_id}" description="${question.question_description}" >Edit</button>                         
                               <p>Posted by: you </p>
                               <a>Answers: ${question.answers.length}</a>
                           </h6>
@@ -304,7 +402,7 @@ const mapelements = {
                     $('.myquestions-container').append(element);
                   });
                 }
-}
+};
   
 createQuestion = document.getElementById('postquestion').addEventListener('click', async(event) => {
                 event.preventDefault();
@@ -326,7 +424,7 @@ createQuestion = document.getElementById('postquestion').addEventListener('click
                   .catch(err => {
                     console.log(`Fetch Error: ${err}`);
                   });
-})
+});
 
 
 
