@@ -277,6 +277,8 @@ section.sec1{
     text-align: center; 
 }
 
+
+
 .popup{
     width:400px;
     height: 180px;
@@ -344,11 +346,38 @@ section.sec1{
     left: 0;
 }
 
-.unauthorized a{
+.container.edit{
+    width:400px;
+    height: 300px;
+    background: url(../images/login.jpg);
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 1000;
+    color:white;
+    text-align: center; 
+}
+
+.container.edit a{
     text-transform: uppercase;
     text-decoration: none;
     text-align: center;
     padding: 15px 0px;
-    border-radius: 10px;
-    color:black;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.container.edit a:first-child{
+    float: left;
+    width: 50%;
+    background-color: #60eb60;
+}
+
+.container a:last-child{
+    float: left;
+    width: 50%;
+    background-color: #3498db;
 }
