@@ -1,6 +1,6 @@
-const apiUrl = 'http://localhost:5000/api/v1/auth';
-const loginurl = `${apiUrl}/login`;
-const logouturl = `${apiUrl}/logout`;
+const baseUrl = 'http://localhost:5000/api/v1/auth';
+const loginurl = `${baseUrl}/login`;
+const logouturl = `${baseUrl}/logout`;
 
 const auth = {
   loginRequest: document.getElementById('login').addEventListener('click', async(event) => {
@@ -16,7 +16,7 @@ const auth = {
                   "email":email,
                   "password":password
                 })
-              })
+                  })
               .then(response => response.json())
               .then(data => {
                 if(data.message == "The email you entered does not match any of our records"){
@@ -52,7 +52,7 @@ const auth = {
               });
             }),
 
-  logoutRequest:document.getElementById('.active.logout').addEventListener('click', async(event) => {
+  logoutRequest:  document.getElementById('.active.logout').addEventListener('click', async(event) => {
                   event.preventDefault();
                   fetch(logouturl, {
                           method:'POST',
@@ -69,7 +69,7 @@ const auth = {
                             console.log(`Fetch Error: ${err}`);
                           });
                       })
-  }
+  };
 
 
 
