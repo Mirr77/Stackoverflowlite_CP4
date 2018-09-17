@@ -17,20 +17,16 @@ getdata =  (url) => {
               });
   };
 
-  mapProfile = (data) => {
+mapProfile = (data) => {
 
             const element = `<div class="card stats">
                                 <h1>${data.data.username}</h1>
                                 <p>${data.data.email}</p>
                                 <h1>Statistics</h1>
                                 <p class="title">No of Questions asked:${data.data.questions.length} </p>
-                                <p class="title">No of questions answered: 9</p>
+                                <p class="title">No of answers given:${data.data.answers} </p>
                             </div>`;
             
             $('.profile-info').html(element);
 
-   }
-
-   window.onload = () => {
-    
-  }
+   };
