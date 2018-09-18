@@ -8,9 +8,8 @@ getdata =  (url) => {
               })
             .then(response => response.json())
             .then(data => {
-
-                console.log('REs-data:', data);
-                mapProfile(data);
+              console.log('REs-data:', data);
+              mapProfile(data);
               })
             .catch(err => {
                 console.log(`Fetch Error: ${err}`);
