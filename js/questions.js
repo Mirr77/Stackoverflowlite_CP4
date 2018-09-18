@@ -12,9 +12,12 @@ const questions = {
                   })
               .then(response => response.json())
               .then(data => {
-                if(data.message == 'Your token has expired. Please log in to continue' ){
-                    window.location.href = "index.html";
-                  }
+                if(data.message == 'Account logged out. Please log in to continue'){
+                  window.location.href = "index.html";
+                }
+                else if(data.message == 'Your token has expired. Please log in to continue' ){
+                  window.location.href = "index.html";
+                }
                   // Call function to map items to a html element
                 console.log('REs-data:', data);
                   
@@ -28,15 +31,18 @@ const questions = {
     myQuestions: (url) => {
                   fetch(myquestionsurl, {
                     method: 'GET',
-                    headers: { Authorization: localStorage.getItem('token') }
+                    headers: {"Authorization": localStorage.getItem('token') }
                       })
+
                   .then(response => response.json())
                   .then(data => {
-                    console.log('REs-data:', data);
-                    if(data.message == 'Your token has expired. Please log in to continue' ){
+                    if(data.message == 'Account logged out. Please log in to continue'){
                       window.location.href = "index.html";
-                      }
-                      
+                    }
+                    else if(data.message == 'Your token has expired. Please log in to continue' ){
+                      window.location.href = "index.html";
+                    }
+                    console.log('REs-data:', data);
                     mapelements.mapMyQuestions(data.questions);
                     })
                   .catch(err => {
