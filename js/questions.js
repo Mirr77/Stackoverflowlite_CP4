@@ -124,20 +124,6 @@ const DeleteQuestion = {
 
             }  
             ),
-      
-    cancelpopup: $(document).ready( function(){
-                  $('.popup').on('click', function(){
-                    if($(event.target).is("#close")){
-                      $(".cover").fadeOut('slow');
-                      $(".popup").fadeOut('slow');
-                    }
-                  });
-                
-                  $('.cover').on('click', function(){
-                    $(".cover").fadeOut('slow');
-                    $(".popup").fadeOut('slow');
-                  });
-                  }), 
 
     function: $(document).on('click', '.delete-button',
               function deleteQuestion(url){
@@ -181,21 +167,6 @@ const DeleteAnswer = {
             }  
             ), 
 
-
-    cancelpopup: $(document).ready( function(){
-                  $('.popup').on('click', function(){
-                    if($(event.target).is("#close")){
-                      $(".cover").fadeOut('slow');
-                      $(".popup").fadeOut('slow');
-                      }
-                      });
-                  
-                      $('.cover').on('click', function(){
-                      $(".cover").fadeOut('slow');
-                      $(".popup").fadeOut('slow');
-                      });
-                    }), 
-
     function: $(document).on('click', '.delete-button', 
               function deleteAnswer (url){
 
@@ -212,8 +183,7 @@ const DeleteAnswer = {
                     window.location.href = "index.html";
                   }
                   else if(data.message == "successfully deleted the answer"){
-                      document.getElementById('delete-answer-message').innerHTML=data.message;
-                      window.location.href = "questions.html";
+                      window.location.reload();
                       }
                       console.log(data.message);
                     })
@@ -239,20 +209,6 @@ const editQuestion = {
               }  
               ), 
     
-    cancelpopup: $(document).ready( function(){
-                  $('.container.edit').on('click', function(){
-                    if($(event.target).is("#close")){
-                      $(".cover").fadeOut('slow');
-                      $(".container.edit").fadeOut('slow');
-                      }
-                      });
-                  
-                      $('.cover').on('click', function(){
-                      $(".cover").fadeOut('slow');
-                      $(".container.edit").fadeOut('slow');
-                      });
-                    }),         
-
     editquestion: $(document).on('click', '.edit-button', 
                   function editQuestion(url){
                   
@@ -268,7 +224,7 @@ const editQuestion = {
                   .then((response) => response.json())
                   .then(data => {
                         if(data.message == "Successfully updated the question"){
-                          window.location.href = "myaccount.html";
+                          window.location.reload();
                         }
                         console.log(data.message);
                       })
@@ -294,20 +250,6 @@ const editanswer = {
             $(".container.edit").fadeIn('slow');
             }  
             ), 
-
-    cancelpopup: $(document).ready( function(){
-                 $('.container.edit').on('click', function(){
-                 if($(event.target).is("#close")){
-                    $(".cover").fadeOut('slow');
-                    $(".container.edit").fadeOut('slow');
-                    }
-                    });
-                
-                    $('.cover').on('click', function(){
-                    $(".cover").fadeOut('slow');
-                    $(".container.edit").fadeOut('slow');
-                    });
-                  }),         
 
     editanswer: $(document).on('click', '.edit-button', 
                   function editAnswer(url){
@@ -397,11 +339,11 @@ const mapelements = {
                     const element = `
                     <div class="card questions" id=${question.question_id}>
                         <p> ${question.question_description}? </p>
-                          <h6>
-                              <button class="button delete question" id="${question.question_id}">Delete</button>
-                              <button class="button edit question" id="${question.question_id}" description="${question.question_description}" >Edit</button>                         
+                          <h6>                         
                               <p>Posted by: you </p>
-                              <a>Answers: ${question.answers.length}</a>
+                              <a>Answers: ${question.answers.length}</a><br>
+                              <button class="button delete question" id="${question.question_id}">Delete</button>
+                              <button class="button edit question" id="${question.question_id}" description="${question.question_description}" >Edit</button>
                           </h6>
                     </div>
                   `;
