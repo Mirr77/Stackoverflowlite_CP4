@@ -23,6 +23,7 @@ mapProfile = (data) => {
                                 <p>${data.data.email}</p>
                                 <h1>Statistics</h1>
                                 <p class="title">No of Questions asked:${data.data.questions.length} </p>
+                                <p class="title">No of Questions answered:${data.data.questions_answered}</p>
                                 <p class="title">No of answers given:${data.data.answers} </p>
                             </div>`;
             
