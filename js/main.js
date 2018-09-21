@@ -7,3 +7,30 @@ $(window).on('scroll', function(){
     }
 });
 
+
+ $(document).ready( function(){
+    $('.popup').on('click', function(){
+      if($(event.target).is("#close")){
+        $(".cover").fadeOut('slow');
+        $(".popup").fadeOut('slow');
+      }
+    });
+  
+    $('.cover').on('click', function(){
+      $(".cover").fadeOut('slow');
+      $(".popup").fadeOut('slow');
+    });
+
+    $('.container.edit').on('click', function(){
+        if($(event.target).is("#close")){
+          $(".cover").fadeOut('slow');
+          $(".container.edit").fadeOut('slow');
+          }
+          });
+      
+          $('.cover').on('click', function(){
+          $(".cover").fadeOut('slow');
+          $(".container.edit").fadeOut('slow');
+          });
+    });
+
