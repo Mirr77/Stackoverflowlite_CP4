@@ -2,6 +2,12 @@ const baseUrl = 'http://localhost:5000/api/v1/auth';
 const loginurl = `${baseUrl}/login`;
 const logouturl = `${baseUrl}/logout`;
 
+
+error = $(document).ready(function(){
+        $('.error').fadeIn('slow');
+        $('.error').fadeOut('slow');
+      });
+
 loginRequest= document.getElementById('login').addEventListener('click', async(event) => {
               event.preventDefault();
               let email = document.getElementById('login-email').value;
@@ -20,24 +26,39 @@ loginRequest= document.getElementById('login').addEventListener('click', async(e
               .then(data => {
                 if(data.message == "The email you entered does not match any of our records"){
                   document.getElementById('error').innerHTML= data.message;
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
                 }
                 else if(data.message == "Password not provided"){
-                  document.getElementById('error').innerHTML = data.message;
+                  document.getElementById('error').innerHTML= data.message;
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
                 }
                 else if(data.message == "incorrect email format"){
-                  document.getElementById('error').innerHTML = data.message;
+                  document.getElementById('error').innerHTML= data.message;
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
                 }
                 else if(data.message == "Wrong password"){
                   document.getElementById('error').innerHTML=data.message;
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
+                  
                 }
                 else if(data.message == "incorrect email format"){
                   document.getElementById('error').innerHTML=data.message;
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
                 }
                 else if(data.message == "incorrect email format"){
                   document.getElementById('error').innerHTML=data.message;
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
                 }
                 else if(data.message == "Invalid token. Please log in or sign up to continue"){
                   document.getElementById('error').innerHTML="Please log in or sign up to continue";
+                  $('.error').fadeIn('slow');
+                  $('.error').fadeOut(3000);
                 }
                 else{
                   window.localStorage.setItem('token', data['token'])
