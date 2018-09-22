@@ -120,6 +120,20 @@ body.index{
     cursor: pointer;
 }
 
+.button.accept{
+    width: 80px;
+    height: 40px;
+    background:#e69b55;
+    border-radius: 10px;
+    margin: 14px auto;
+    display: inline-block;
+    font-family: "Montserrat",sans-serif;
+    font-size: 16px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
 .answer-button{
     width: 260px;
     height: 40px;
@@ -396,3 +410,25 @@ section.sec1{
     display: none;
     z-index: 3000;
 }
+
+.card.answer{
+    display: grid;
+    grid-template-columns: 20% 80%;
+    grid-column-gap: 1em;
+    grid-row-gap: 1em;
+}
+
+.vote{
+    width:80px;
+    height:50px;
+    opacity:0.5;
+}
+
+
+.vote.downvote{
+    width:80px;
+    height:50px;
+    opacity:0.5;
+    transform:rotate(180deg);
+}
+
