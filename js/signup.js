@@ -38,12 +38,9 @@ const signupRequest = document.getElementById('signup').addEventListener('click'
             document.getElementById('error').innerHTML=data.message;
           }
           else if(data.message  == "User registered successfully"){
-            console.log(data.message);
             window.localStorage.setItem('token', data['token'])
             window.localStorage.setItem('user_id',data['user']['user_id'])
             window.location.href = 'questions.html';
-            console.log(data.message);
-            // return false;
           }
       })
         .catch(err => {
