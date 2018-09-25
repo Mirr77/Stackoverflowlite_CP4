@@ -29,7 +29,8 @@ const questions = {
             },
 
     myQuestions: (url) => {
-                  fetch(myquestionsurl, {
+                  let user_id = localStorage.getItem('user_id')
+                  fetch(`${apiUrl}/user_questions/${user_id}`, {
                     method: 'GET',
                     headers: {"Authorization": localStorage.getItem('token') }
                       })
@@ -42,18 +43,47 @@ const questions = {
                     else if(data.message == 'Your token has expired. Please log in to continue' ){
                       window.location.href = "index.html";
                     }
-                    console.log('REs-data:', data);
-                    mapelements.mapMyQuestions(data.questions);
+                    else if(data.message == "There are no questions to view"){
+                      $('.myquestions-container').html(data.message)
+                    }
+                    else{
+                      mapelements.mapMyQuestions(data.questions);
+                    }
                     })
                   .catch(err => {
                     console.log(`Fetch Error: ${err}`);
                     });
-                }
+                },
+
+    createQuestion: $(document).on('click', '.postquestion', 
+                    function async(event){
+                    event.preventDefault();
+                    let description = document.getElementById('description').value;
+                    fetch(questionsurl, {
+                        method:'POST',
+                        headers:{"Authorization":localStorage.getItem('token'),
+                                  "Content-type":"application/json" ,
+                                  "Accept":"application/json"},
+                        body: JSON.stringify({
+                          "description":description
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('message').innerHTML = data.message;
+                        $('.message.questions').fadeIn('slow');
+                        $('.message.questions').fadeOut(3000);
+      
+                      })
+                    .catch(err => {
+                        console.log(`Fetch Error: ${err}`);
+                      });
+                      })
 };
 
 window.onload = () => {questions.getAll(questionsurl);
                       questions.myQuestions(myquestionsurl);
-                      getdata(profileUrl);
+                      profile.getmydata(profileUrl);
                     }
 
 const answers = { 
@@ -83,7 +113,8 @@ const answers = {
                       }),
 
     answerquestion: $(document).on('click', '.answer-button', 
-                      function createAnswer(url) {
+                      function async(event) {
+                      event.preventDefault();
                       let id = $(this).attr('id')
                       let answer = document.getElementById('answer').value;
 
@@ -101,13 +132,17 @@ const answers = {
                           if(data.message == 'Your token has expired. Please log in to continue' ){
                             window.location.href = "index.html";
                           }
-                          console.log(data.answers);
-                          window.location= "questions.html";
+                          console.log(data);
+                          $('.message.answers').html(data.message);
+                          $('.message.answers').fadeIn('slow');
+                          $('.message.answers').fadeOut(3000);
+          
                           })
                       .catch(err => {
                           console.log(`Fetch Error: ${err}`);
                           });
-                      })
+                      }),
+
 };
 
 const Delete= {
@@ -179,7 +214,7 @@ const Delete= {
                         else if(data.message == "successfully deleted the answer"){
                             window.location.reload();
                             }
-                            console.log(data.message);
+                            
                           })
                     .catch(err => {
                         console.log(`Fetch Error: ${err}`);
@@ -202,7 +237,7 @@ const edit = {
                         $(".cover").fadeIn('slow');
                         $(".container.edit").fadeIn('slow');
                         }  
-                        ), 
+                        ),
     
     editquestion: $(document).on('click', '.edit-button', 
                   function editQuestion(url){
@@ -241,8 +276,7 @@ const edit = {
                       $(".cover").fadeIn('slow');
                       $(".container.edit").fadeIn('slow');
                       }  
-                      ), 
-      
+                      ),
     
     editanswer: $(document).on('click', '.edit-button', 
                 function editAnswer(url){
@@ -282,37 +316,43 @@ const answerFunctions = {
                 body: JSON.stringify({
                       "vote":vote})
                     })
-                .then((response) => response.json())
-                .then(data => {
-                      console.log(data.message);
-                    })
-                .catch(err => {
-                      console.log(`Fetch Error: ${err}`);
-                    });
+            .then((response) => response.json())
+            .then(data => {
+                console.log(data.message);
+                $('.message.answers').html(data.message);
+                $('.message.answers').fadeIn('slow');
+                $('.message.answers').fadeOut(3000);
+                  })
+            .catch(err => {
+                console.log(`Fetch Error: ${err}`);
+                });
                 }),
 
-    accept: $(document).on('click', '.accpet', 
+    accept: $(document).on('click', '.accept', 
               function acceptAnswer(url){
               let answer_id = $(this).attr('id')
               let question_id= $(this).attr('name')
+              let accept= $(this).attr('status') 
 
-              fetch(`${apiUrl}question/${question_id}/answers/${answer_id}/accept`, {
+              fetch(`${apiUrl}/questions/${question_id}/answers/${answer_id}/accept`, {
                   method: 'POST',
-                  headers: {"Authorization":localStorage.getItem('token') },
+                  headers: {"Authorization":localStorage.getItem('token')},
                   body: JSON.stringify({
-                        "vote":vote})
+                        "status":accept})
                     })
               .then((response) => response.json())
               .then(data => {
                   console.log(data.message);
+                  $(this).html('Accepted');
+                  $('.message.answers').html(data.message);
+                  $('.message.answers').fadeIn('slow');
+                  $('.message.answers').fadeOut(3000);
                     })
               .catch(err => {
                   console.log(`Fetch Error: ${err}`);
                     });
                 })
 };
-
-
 
 const mapelements = {
 
@@ -323,7 +363,7 @@ const mapelements = {
                       <div class="card questions" id=${question.question_id}>
                             <p> ${question.question_description}? </p>
                                 <h6>
-                                    <p>Posted by: ${question.posted_by}</p>
+                                <p>Posted by:<a class="posted" user_id=${question.user_id} style=color:blue;>${question.posted_by}</a> on: ${question.created_at}</p>
                                     <a>Answers: ${question.answers.length}</a>
                                 </h6>
                       </div>
@@ -335,9 +375,8 @@ const mapelements = {
     mapAnswers: (data) => {
                 data.forEach(answer => {
                   let user_id = localStorage.getItem('user_id')
-                  let quser_id = localStorage.getItem('quser_id') 
-
-                  if((user_id == answer.user_id) || (user_id == quser_id)){
+              
+                  if((answer.question_owner == user_id) && (user_id == answer.user_id)){
 
                   const element = `
 
@@ -353,17 +392,17 @@ const mapelements = {
                           <p> ${answer.answer_description}
                           </p>
                           <h6>
-                            <p>Posted by: ${answer.posted_by}</p>
+                          <p>Posted by:<a class="posted" user_id=${answer.user_id} style=color:blue;>${answer.posted_by}</a> on ${answer.created_at}</p>
                           </h6>
                           <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}">Delete</button>
                           <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" description="${answer.answer_description}">Edit</button>
-                          <button class="button accept answer" id="${answer.answer_id}" name="${answer.question_id}">Accept</button>
+                          <button class="button accept answer" id="${answer.answer_id}" name="${answer.question_id}" status="accepted">${answer.accepted}</button>
                         </div>
                   </div>`;
 
                   $('.answers-container').append(element);
                   }
-                else if ((user_id != answer.user_id) || (user_id == quser_id)){
+                else if ((answer.question_owner == user_id) && (user_id != answer.user_id)){
 
                   const element = `
 
@@ -379,16 +418,16 @@ const mapelements = {
                           <p> ${answer.answer_description}
                           </p>
                           <h6>
-                            <p>Posted by: ${answer.posted_by}</p>
+                          <p>Posted by:<a class="posted" user_id=${answer.user_id} style=color:blue;>${answer.posted_by}</a> on: ${answer.created_at}</p>
                           </h6>
-                          <button class="button accept answer" id="${answer.answer_id}" name="${answer.question_id}">Accept</button>
+                          <button class="button accept answer" status="accepted" id="${answer.answer_id}" name="${answer.question_id}">${answer.accepted}</button>
                         </div>
                   </div>`;
 
                   $('.answers-container').append(element);
 
                 }
-                else if (user_id === answer.user_id){
+                else if (user_id == answer.user_id){
 
                   const element = `
 
@@ -404,7 +443,7 @@ const mapelements = {
                           <p> ${answer.answer_description}
                           </p>
                           <h6>
-                            <p>Posted by: ${answer.posted_by}</p>
+                          <p>Posted by:<a class="posted" style=color:blue;>${answer.posted_by}</a> on: ${answer.created_at}</p>
                           </h6>
                           <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}">Delete</button>
                           <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" description="${answer.answer_description}">Edit</button>
@@ -429,7 +468,7 @@ const mapelements = {
                                 ${answer.answer_description}
                             </p>
                             <h6>
-                                <p>Posted by: ${answer.posted_by}</p>
+                                <p>Posted by:<a class="posted" user_id=${answer.user_id} style=color:blue;>${answer.posted_by}</a> on: ${answer.created_at}</p>
                             </h6> 
                       </div>
                   </div>`;
@@ -446,7 +485,7 @@ const mapelements = {
                     <div class="card questions" id=${question.question_id}>
                         <p> ${question.question_description}? </p>
                           <h6>                         
-                              <p>Posted by: you </p>
+                              <p>Posted by: YOU on: ${question.created_at}</p>
                               <a>Answers: ${question.answers.length}</a><br>
                               <button class="button delete question" id="${question.question_id}">Delete</button>
                               <button class="button edit question" id="${question.question_id}" description="${question.question_description}" >Edit</button>
@@ -456,30 +495,11 @@ const mapelements = {
                     $('.myquestions-container').append(element);
                   });
                 }
+  
 };
   
 
-createQuestion = document.getElementById('postquestion').addEventListener('click', async(event) => {
-  event.preventDefault();
-  let description = document.getElementById('description').value;
-  fetch(questionsurl, {
-    method:'POST',
-    headers:{"Authorization":localStorage.getItem('token'),
-              "Content-type":"application/json" ,
-              "Accept":"application/json"},
-    body: JSON.stringify({
-      "description":description
-    })
-  })
-    .then(response => response.json())
-    .then(data => {
-      window.localStorage.setItem('quser_id', data['question'][0]['user_id'])
-      console.log(data);
-    })
-    .catch(err => {
-      console.log(`Fetch Error: ${err}`);
-    });
-    })
+
 
 
 
