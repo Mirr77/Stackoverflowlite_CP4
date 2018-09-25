@@ -23,10 +23,12 @@
         </nav>
         <div class="content">
             <div class="questions-container">
+                <div class="message questions" id="message-questions"></div>
                 <h1>Questions</h1>
-                <h6 id="instruction">Click on a question to view the answers</h6>
+                <h4 id="instruction" style="color:blue">Click on a question to view the answers</h4>
             </div>
-            <div class="two">
+            <div class="question-answers">
+                <div class="message answers" id="message-answers"></div>
                 <h1>Answers</h1>
                 <p id="delete-answer-message"></p>
                 <div class="answers-container">
@@ -36,7 +38,7 @@
                     <h5>Your Answer</h5>
                     <form>
                         <textarea cols="50" rows="5" id="answer"></textarea><br>
-                        <input class="answer-button" type="submit" value="SUBMIT">
+                        <input class="answer-button" id="answer-button" type="submit" value="SUBMIT">
                     </form>
                 </div>
             </div>
@@ -67,6 +69,7 @@
     <div class="cover"></div>
  
     <script src="./js/main.js"></script>
+    <script src="./js/profile.js"></script>
     <script src="./js/questions.js"></script>
     <script src="./js/logout.js"></script>
 </body>
