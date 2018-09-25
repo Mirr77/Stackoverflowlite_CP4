@@ -10,8 +10,10 @@ logoutRequest = document.getElementById('logout').addEventListener('click', asyn
                         .then((response) => response.json())
                         .then(data => {
                         // Show notification message then redirect to login page
-                        console.log('REs-data:', data);
                         window.location.href = 'index.html';
+                        document.getElementById('error').innerHTML=data.message;
+                        $('.error').fadeIn('slow');
+                        $('.error').fadeOut(3000);
                 
                         })
                         .catch(err => {
