@@ -121,7 +121,7 @@ body.index{
 }
 
 .button.accept{
-    width: 80px;
+    width: 100px;
     height: 40px;
     background:#e69b55;
     border-radius: 10px;
@@ -135,6 +135,20 @@ body.index{
 }
 
 .answer-button{
+    width: 260px;
+    height: 40px;
+    background: #3498db;
+    border-radius: 10px;
+    margin: 14px auto;
+    display: inline-block;
+    font-family: "Montserrat",sans-serif;
+    font-size: 16px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.postquestion{
     width: 260px;
     height: 40px;
     background: #3498db;
@@ -255,6 +269,10 @@ section.sec1{
     transition: 0.3s;
 }
 
+.card.questions.blue{
+    background: rgba(186, 195, 219, 0.8);
+}
+
 .card.stats{
     box-shadow: 0 2px 4px 0 rgba(154, 160, 189, 0.1);
     transition: 0.3s;
@@ -271,7 +289,8 @@ section.sec1{
     grid-template-columns: 40% 60%;
     grid-column-gap: 1em;
     grid-row-gap: 1em;
-    padding: 100px 50px;
+    padding: 80px 50px;
+
 }
 
 .content.account{
@@ -431,4 +450,25 @@ section.sec1{
     opacity:0.5;
     transform:rotate(180deg);
 }
+
+.message{
+    height: 40px;
+    color: #1a630c;
+    background-color: #c6dfc1;
+    display: none;
+}
+
+
+.questions-container{
+    width: 900px;
+}
+.my-questions{
+    width:800px;
+}
+
+.question-answers{
+    display: none;
+}
+
+
 
