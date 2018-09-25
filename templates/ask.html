@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand:500">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+  
+
+    <title>Ask a question</title>
+</head>
+
+<body class="home">
+    <!-- navigation bar -->
+    <div class="wrapper">
+            <nav>
+                <a class="logo" href="questions.html">STACKOVERFLOWLITE</a>
+                <ul>
+                    <li><a href="questions.html">QUESTIONS</a></li>
+                    <li><a href="myaccount.html">My Account</a></li>
+                    <li><a class="active logout" id="logout">Logout</a></li>
+                </ul>
+            </nav>
+            <section class="sec1"></section>
+    </div>
+   
+    <!--ask a question form -->
+    <div class="container ask">
+            <div class="message questions" id="message"></div>
+            <h1>ASK A QUESTION</h1>
+            <form>
+                <div class="form-data ask">
+                    <textarea class="ask" rows="10" cols="30" name="question" form="questionform" id="description"> Type your question here...</textarea>
+                </div>
+                <input class="postquestion" type="submit" id="postquestion" value="SUBMIT" >
+            </form>
+    </div>
+    <script src="../js/questions.js"></script>
+    <script src="../js/logout.js"></script>
+</body>
+
+</html>
