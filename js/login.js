@@ -60,7 +60,7 @@ loginRequest= document.getElementById('login').addEventListener('click', async(e
                   $('.error').fadeIn('slow');
                   $('.error').fadeOut(3000);
                 }
-                else{
+                else if(data.message == "Login successful"){
                   window.localStorage.setItem('token', data['token'])
                   window.localStorage.setItem('user_id',data['user']['user_id'])
                   window.location = 'questions.html'; 
