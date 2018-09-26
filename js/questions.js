@@ -81,10 +81,12 @@ const questions = {
                       })
 };
 
+
 window.onload = () => {questions.getAll(questionsurl);
-                      questions.myQuestions(myquestionsurl);
-                      profile.getmydata(profileUrl);
-                    }
+  questions.myQuestions(myquestionsurl);
+  profile.getmydata(profileUrl); 
+  postedbyprofile.profileQuestions(myquestionsurl);
+}
 
 const answers = { 
 
@@ -354,6 +356,46 @@ const answerFunctions = {
                 })
 };
 
+
+const postedbyprofile = {
+
+  click: $(document).on('click','.posted',function(){
+            let profile_id = $(this).attr('user_id')
+            localStorage.setItem('profile_id', profile_id)
+            window.location.href  = "profile.html";
+            }),
+
+  
+  profileQuestions: (url) => {
+              let user_id = localStorage.getItem('profile_id')
+              fetch(`${apiUrl}/user_questions/${user_id}`, {
+                method: 'GET',
+                headers: {"Authorization": localStorage.getItem('token') }
+                  })
+
+              .then(response => response.json())
+              .then(data => {
+                if(data.message == 'Account logged out. Please log in to continue'){
+                  window.location.href = "index.html";
+                }
+                else if(data.message == 'Your token has expired. Please log in to continue' ){
+                  window.location.href = "index.html";
+                }
+                else if(data.message == "There are no questions to view"){
+                  $('.myquestions-container-other').html(data.message)
+                }
+                else{
+                  mapelements.mapProfileQuestions(data.questions);
+                }
+                })
+              .catch(err => {
+                console.log(`Fetch Error: ${err}`);
+                });
+            }
+
+};
+
+
 const mapelements = {
 
     mapAllQuestions: (data) => {
@@ -493,6 +535,21 @@ const mapelements = {
                     </div>
                   `;
                     $('.myquestions-container').append(element);
+                  });
+                },
+
+  mapProfileQuestions: (data) => {
+                  data.forEach(question => {
+                    const element = `
+                    <div class="card questions" id=${question.question_id}>
+                        <p> ${question.question_description}? </p>
+                          <h6>                         
+                              <p>Posted by: YOU on: ${question.created_at}</p>
+                              <a>Answers: ${question.answers.length}</a><br>
+                          </h6>
+                    </div>
+                  `;
+                    $('.myquestions-container-other').append(element);
                   });
                 }
   
