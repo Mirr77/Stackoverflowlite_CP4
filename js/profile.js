@@ -19,30 +19,27 @@ const profile = {
       });
      },
 
-  getdata: $(document).on('click', '.posted', 
-            function getdata(){
-              let user_id = $(this).attr('user_id')
-              let stored_id = localStorage.getItem('user_id')
-              fetch(`${profileUrl}/${user_id}`, {
-                method: 'GET',
-                headers: {"Authorization":localStorage.getItem('token') }
-                })
-              .then(response => response.json())
-              .then(data => {
-                if(stored_id == user_id){
-                  window.location.href = "myaccount.html"
-                }
-                else{
-                  window.location.href = "profile.html"; 
-                  mapdata(data);
-                }
-                })
-              .catch(err => {
-                  console.log(`Fetch Error: ${err}`);
-                })
-               })
-
+    getdata: (url) => {
+      let user_id  = localStorage.getItem('profile_id')
+      fetch(`${profileUrl}/${user_id}`, {
+        method: 'GET',
+        headers: {"Authorization":localStorage.getItem('token') }
+        })
+      .then(response => response.json())
+      .then(data => {
+        console.log('REs-data:', data);
+        mapdata(data);
+        })
+      .catch(err => {
+          console.log(`Fetch Error: ${err}`);
+        });
+    }
 };
+
+window.onload = () => {
+  profile.getdata(profileUrl);
+  postedbyprofile.profileQuestions(myquestionsurl);
+}
 
 
 mapmyProfile = (data) => {
