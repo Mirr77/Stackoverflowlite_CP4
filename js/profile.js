@@ -38,7 +38,6 @@ const profile = {
 
 window.onload = () => {
   profile.getdata(profileUrl);
-  postedbyprofile.profileQuestions(myquestionsurl);
 }
 
 

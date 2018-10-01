@@ -44,7 +44,7 @@ const questions = {
                       window.location.href = "index.html";
                     }
                     else if(data.message == "There are no questions to view"){
-                      $('.myquestions-container').html(data.message)
+                      $('.myquestions-container').html(data.message);
                     }
                     else{
                       mapelements.mapMyQuestions(data.questions);
@@ -55,8 +55,7 @@ const questions = {
                     });
                 },
 
-    createQuestion: $(document).on('click', '.postquestion', 
-                    function async(event){
+    createQuestion: async(url) => {
                     event.preventDefault();
                     let description = document.getElementById('description').value;
                     fetch(questionsurl, {
@@ -73,12 +72,13 @@ const questions = {
                         document.getElementById('message').innerHTML = data.message;
                         $('.message.questions').fadeIn('slow');
                         $('.message.questions').fadeOut(3000);
-      
+
                       })
                     .catch(err => {
                         console.log(`Fetch Error: ${err}`);
                       });
-                      })
+                      }  
+
 };
 
 
@@ -90,13 +90,10 @@ window.onload = () => {questions.getAll(questionsurl);
 
 const answers = { 
 
-    questionanswers: $(document).on('click', '.card.questions', 
-                      function getquestionAnswers (url){
+    questionanswers: (id) => {
                       $('.answers-container').empty();
+                      document.getElementsByClassName("answer-button")[0].setAttribute("id", id);
 
-                      let id = $(this).attr('id')
-                      $('.answer-button').attr('id',id);
-                        
                       fetch(`${apiUrl}/question_answers/${id}`, {
                           method: 'GET',
                           headers: {"Authorization": localStorage.getItem('token')}
@@ -112,13 +109,12 @@ const answers = {
                       .catch(err => {
                           console.log(`Fetch Error: ${err}`);
                           });
-                      }),
+                      },
 
-    answerquestion: $(document).on('click', '.answer-button', 
-                      function async(event) {
-                      event.preventDefault();
-                      let id = $(this).attr('id')
-                      let answer = document.getElementById('answer').value;
+    answerquestion: async (id) => {
+                    event.preventDefault();
+
+                      let answer = document.getElementById('answer-desc').value;
 
                       fetch(`${apiUrl}/questions/${id}/answers`, {
                           method:'POST',
@@ -134,35 +130,118 @@ const answers = {
                           if(data.message == 'Your token has expired. Please log in to continue' ){
                             window.location.href = "index.html";
                           }
-                          console.log(data);
-                          $('.message.answers').html(data.message);
-                          $('.message.answers').fadeIn('slow');
-                          $('.message.answers').fadeOut(3000);
-          
+                          else if(data.message == 'Your token has expired. Please log in to continue' ){
+                            document.getElementById("message-answers").innerHTML = data.message;
+                          }
+                          else{
+                            console.log(data);
+                            document.getElementById("message-answers").innerHTML = data.message;
+                            $('.message.answers').fadeIn('slow');
+                            $('.message.answers').fadeOut(3000);
+                              }
                           })
                       .catch(err => {
                           console.log(`Fetch Error: ${err}`);
                           });
-                      }),
+                      }
+
+};
+
+
+const answerFunctions = {
+
+  vote: (id, name) => {
+
+          fetch(`${apiUrl}/answers/${id}/vote`, {
+              method: 'POST',
+              headers: {"Authorization":localStorage.getItem('token') },
+              body: JSON.stringify({
+                    "vote":name})
+                  })
+          .then((response) => response.json())
+          .then(data => {
+              console.log(data.message);
+              document.getElementById("message-answers").innerHTML = data.message;
+              $('.message.answers').fadeIn('slow');
+              $('.message.answers').fadeOut(3000);
+                })
+          .catch(err => {
+              console.log(`Fetch Error: ${err}`);
+              });
+              },
+
+  accept: async(id,name) => {
+            event.preventDefault();
+            let answer_id = id
+            let question_id= name 
+
+            fetch(`${apiUrl}/questions/${question_id}/answers/${answer_id}/accept`, {
+                method: 'POST',
+                headers: {"Authorization":localStorage.getItem('token')},
+                body: JSON.stringify({
+                      "status":"accepted"})
+                  })
+            .then((response) => response.json())
+            .then(data => {
+                $(this).html('Accepted');
+                document.getElementById("message-answers").innerHTML = data.message;
+                $('.message.answers').fadeIn('slow');
+                $('.message.answers').fadeOut(3000);
+                  })
+            .catch(err => {
+                console.log(`Fetch Error: ${err}`);
+                  });
+              }
+};
+
+
+const postedbyprofile = {
+
+click: (id) => {
+          localStorage.setItem('profile_id', id)
+          window.location.href  = "profile.html";
+          },
+
+profileQuestions: (url) => {
+            let user_id = localStorage.getItem('profile_id')
+            fetch(`${apiUrl}/user_questions/${user_id}`, {
+              method: 'GET',
+              headers: {"Authorization": localStorage.getItem('token') }
+                })
+
+            .then(response => response.json())
+            .then(data => {
+              if(data.message == 'Account logged out. Please log in to continue'){
+                window.location.href = "index.html";
+              }
+              else if(data.message == 'Your token has expired. Please log in to continue' ){
+                window.location.href = "index.html";
+              }
+              else if(data.message == "There are no questions to view"){
+                $('.myquestions-container-other').html(data.message)
+              }
+              else{
+                mapelements.mapProfileQuestions(data.questions);
+              }
+              })
+            .catch(err => {
+              console.log(`Fetch Error: ${err}`);
+              });
+          }
 
 };
 
 const Delete= {
   
-    questionpopup: $(document).on('click', '.button.delete.question', 
-
-                    function showpopup(){
-                    let id = $(this).attr('id')
-                    $('.delete-button').attr('id',id);
-
+    questionpopup: (id) => {
+                    window.localStorage.setItem('deleteq_id', id)
                     $(".cover").fadeIn('slow');
                     $(".popup").fadeIn('slow');
-                    }  
-                    ),
+                    },
 
     deletequestion: $(document).on('click', '.delete-button',
                     function deleteQuestion(url){
-                    let id = $(this).attr('id')
+                    let id = localStorage.getItem('deleteq_id')
 
                     fetch(`${apiUrl}/questions/${id}`, {
                         method: 'DELETE',
@@ -174,7 +253,6 @@ const Delete= {
                           window.location.href = "index.html";
                         }
                         else if(data.message == "Deleted successfully"){
-                            document.getElementById('delete-message').innerHTML=data.message;
                             window.location.href = "myaccount.html";
                               }
                         console.log(data.message);
@@ -184,25 +262,20 @@ const Delete= {
                       });
                       }),
 
-    answerpopup: $(document).on('click', '.button.delete.answer', 
+    answerpopup: (id, name)  => {
+                  window.localStorage.setItem('deleteans_id', id)
+                  window.localStorage.setItem('deleteans_name', name)
 
-                  function showpopup(url){
-                  let id = $(this).attr('id')
-                  let name = $(this).attr('name')
-      
-                  $('.delete-button').attr('id',id);
-                  $('.delete-button').attr('name',name);
-                      
+
                   $(".cover").fadeIn('slow');
                   $(".popup").fadeIn('slow');
-                  }  
-                  ), 
+                  }, 
 
     deleteanswer: $(document).on('click', '.delete-button', 
                     function deleteAnswer (url){
       
-                    let question_id = $(this).attr('name')
-                    let answer_id = $(this).attr('id')
+                    let question_id = localStorage.getItem('deleteans_name')
+                    let answer_id = localStorage.getItem('deleteans_id')
       
                     fetch(`${apiUrl}/questions/${question_id}/answers/${answer_id}`, {
                         method: 'DELETE',
@@ -227,24 +300,18 @@ const Delete= {
 
 const edit = {
 
-    editquestionpopup: $(document).on('click', '.button.edit.question', 
+    editquestionpopup: (id,value) => {
+                      window.localStorage.setItem('editq_id', id)
+                      document.getElementById("description").innerHTML = value;
 
-                        function showpopup(url){
-                        let id = $(this).attr('id')
-                        let description = $(this).attr('description')
-
-                        $('.edit-button').attr('id',id);
-                        $('.description').html(description);
-                            
-                        $(".cover").fadeIn('slow');
-                        $(".container.edit").fadeIn('slow');
-                        }  
-                        ),
+                      $(".cover").fadeIn('slow');
+                      $(".container.edit").fadeIn('slow');
+                        },
     
     editquestion: $(document).on('click', '.edit-button', 
                   function editQuestion(url){
                   
-                  let id = $(this).attr('id')
+                  let id = localStorage.getItem('editq_id');
                   let description = document.getElementById('description').value;
 
                   fetch(`${apiUrl}/questions/${id}`, {
@@ -265,25 +332,19 @@ const edit = {
                       });
                   }),
 
-    editanswerpopup: $(document).on('click', '.button.edit.answer', 
-                      function showpopup(url){
-                      let id = $(this).attr('id')
-                      let name = $(this).attr('name')
-                      let description = $(this).attr('description')
-          
-                      $('.edit-button').attr('id',id);
-                      $('.edit-button').attr('name', name);
-                      $('.description').html(description);
+    editanswerpopup: (id,name,value) => {
+                    window.localStorage.setItem('editans_id', id)
+                    window.localStorage.setItem('editans_name', name)
+                    document.getElementById("description").innerHTML = value;
                           
                       $(".cover").fadeIn('slow');
                       $(".container.edit").fadeIn('slow');
-                      }  
-                      ),
+                      },
     
     editanswer: $(document).on('click', '.edit-button', 
                 function editAnswer(url){
-                let question_id = $(this).attr('name')
-                let answer_id = $(this).attr('id')
+                let question_id = localStorage.getItem('editans_name')
+                let answer_id = localStorage.getItem('editans_id')
                   
                 let answer = document.getElementById('description').value;
 
@@ -304,108 +365,16 @@ const edit = {
                   })
   };
 
-
-const answerFunctions = {
-
-    vote: $(document).on('click', '.vote', 
-            function upvoteAnswer(url){
-            let answer_id = $(this).attr('id')
-            let vote = $(this).attr('vote')
-
-            fetch(`${apiUrl}/answers/${answer_id}/vote`, {
-                method: 'POST',
-                headers: {"Authorization":localStorage.getItem('token') },
-                body: JSON.stringify({
-                      "vote":vote})
-                    })
-            .then((response) => response.json())
-            .then(data => {
-                console.log(data.message);
-                $('.message.answers').html(data.message);
-                $('.message.answers').fadeIn('slow');
-                $('.message.answers').fadeOut(3000);
-                  })
-            .catch(err => {
-                console.log(`Fetch Error: ${err}`);
-                });
-                }),
-
-    accept: $(document).on('click', '.accept', 
-              function acceptAnswer(url){
-              let answer_id = $(this).attr('id')
-              let question_id= $(this).attr('name')
-              let accept= $(this).attr('status') 
-
-              fetch(`${apiUrl}/questions/${question_id}/answers/${answer_id}/accept`, {
-                  method: 'POST',
-                  headers: {"Authorization":localStorage.getItem('token')},
-                  body: JSON.stringify({
-                        "status":accept})
-                    })
-              .then((response) => response.json())
-              .then(data => {
-                  console.log(data.message);
-                  $(this).html('Accepted');
-                  $('.message.answers').html(data.message);
-                  $('.message.answers').fadeIn('slow');
-                  $('.message.answers').fadeOut(3000);
-                    })
-              .catch(err => {
-                  console.log(`Fetch Error: ${err}`);
-                    });
-                })
-};
-
-
-const postedbyprofile = {
-
-  click: $(document).on('click','.posted',function(){
-            let profile_id = $(this).attr('user_id')
-            localStorage.setItem('profile_id', profile_id)
-            window.location.href  = "profile.html";
-            }),
-
-  
-  profileQuestions: (url) => {
-              let user_id = localStorage.getItem('profile_id')
-              fetch(`${apiUrl}/user_questions/${user_id}`, {
-                method: 'GET',
-                headers: {"Authorization": localStorage.getItem('token') }
-                  })
-
-              .then(response => response.json())
-              .then(data => {
-                if(data.message == 'Account logged out. Please log in to continue'){
-                  window.location.href = "index.html";
-                }
-                else if(data.message == 'Your token has expired. Please log in to continue' ){
-                  window.location.href = "index.html";
-                }
-                else if(data.message == "There are no questions to view"){
-                  $('.myquestions-container-other').html(data.message)
-                }
-                else{
-                  mapelements.mapProfileQuestions(data.questions);
-                }
-                })
-              .catch(err => {
-                console.log(`Fetch Error: ${err}`);
-                });
-            }
-
-};
-
-
 const mapelements = {
 
     mapAllQuestions: (data) => {
                     data.forEach(question => {
                       const element = `
 
-                      <div class="card questions" id=${question.question_id}>
+                      <div class="card questions" id=${question.question_id} onclick="answers.questionanswers(id)">
                             <p> ${question.question_description}? </p>
                                 <h6>
-                                <p>Posted by:<a class="posted" user_id=${question.user_id} style=color:blue;>${question.posted_by}</a> on: ${question.created_at}</p>
+                                <p>Posted by:<a class="posted" id=${question.user_id}  onclick="postedbyprofile.click(id)" style=color:blue;>${question.posted_by}</a> on: ${question.created_at}</p>
                                     <a>Answers: ${question.answers.length}</a>
                                 </h6>
                       </div>
@@ -425,9 +394,9 @@ const mapelements = {
                   <div class="card answer" id=${answer.answer_id}>
 
                         <div>
-                          <img class="vote upvote" id=${answer.answer_id} vote="1" src="../images/upvote.png" alt="vote"><br>
+                          <img class="vote upvote" id=${answer.answer_id} name="1" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)"><br>
                           <h2 style="text-align:center;color:grey;">${answer.votes}</h2>
-                          <img class="vote downvote" id=${answer.answer_id} vote="2" src="../images/upvote.png" alt="vote">
+                          <img class="vote downvote" id=${answer.answer_id} name="2" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)">
                         </div>
 
                         <div>
@@ -436,9 +405,9 @@ const mapelements = {
                           <h6>
                           <p>Posted by:<a class="posted" user_id=${answer.user_id} style=color:blue;>${answer.posted_by}</a> on ${answer.created_at}</p>
                           </h6>
-                          <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}">Delete</button>
-                          <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" description="${answer.answer_description}">Edit</button>
-                          <button class="button accept answer" id="${answer.answer_id}" name="${answer.question_id}" status="accepted">${answer.accepted}</button>
+                          <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}" onclick="Delete.answerpopup(id,name)">Delete</button>
+                          <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" value="${answer.answer_description}" onclick="edit.editanswerpopup(id,name,value)">Edit</button>
+                          <button class="button accept answer" id="${answer.answer_id}" name="${answer.question_id}" onclick="answerFunctions.accept(id,name)">${answer.accepted}</button>
                         </div>
                   </div>`;
 
@@ -451,9 +420,9 @@ const mapelements = {
                   <div class="card answer" id=${answer.answer_id}>
 
                         <div>
-                          <img class="vote upvote" id=${answer.answer_id} vote="1" src="../images/upvote.png" alt="vote"><br>
+                          <img class="vote upvote" id=${answer.answer_id} name="1" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)"><br>
                           <h2 style="text-align:center;color:grey;">${answer.votes}</h2>
-                          <img class="vote downvote" id=${answer.answer_id} vote="2" src="../images/upvote.png" alt="vote">
+                          <img class="vote downvote" id=${answer.answer_id} name="2" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)">
                         </div>
 
                         <div>
@@ -462,7 +431,7 @@ const mapelements = {
                           <h6>
                           <p>Posted by:<a class="posted" user_id=${answer.user_id} style=color:blue;>${answer.posted_by}</a> on: ${answer.created_at}</p>
                           </h6>
-                          <button class="button accept answer" status="accepted" id="${answer.answer_id}" name="${answer.question_id}">${answer.accepted}</button>
+                          <button class="button accept answer" id="${answer.answer_id}" name="${answer.question_id}" onclick="answerFunctions.accept(id,name)">${answer.accepted}</button>
                         </div>
                   </div>`;
 
@@ -476,9 +445,9 @@ const mapelements = {
                   <div class="card answer" id=${answer.answer_id}>
 
                         <div>
-                          <img class="vote upvote" id=${answer.answer_id} vote="1" src="../images/upvote.png" alt="vote"><br>
+                          <img class="vote upvote" id=${answer.answer_id} name="1" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)"><br>
                           <h2 style="text-align:center;color:grey;">${answer.votes}</h2>
-                          <img class="vote downvote" id=${answer.answer_id} vote="2" src="../images/upvote.png" alt="vote">
+                          <img class="vote downvote" id=${answer.answer_id} name="2" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)">
                         </div>
 
                         <div>
@@ -487,8 +456,8 @@ const mapelements = {
                           <h6>
                           <p>Posted by:<a class="posted" style=color:blue;>${answer.posted_by}</a> on: ${answer.created_at}</p>
                           </h6>
-                          <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}">Delete</button>
-                          <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" description="${answer.answer_description}">Edit</button>
+                          <button class="button delete answer" id="${answer.answer_id}" name="${answer.question_id}" onclick="Delete.answerpopup(id,name)">Delete</button>
+                          <button class="button edit answer" id="${answer.answer_id}" name="${answer.question_id}" value="${answer.answer_description}" onclick="edit.editanswerpopup(id,name,value)">Edit</button>
                         </div>
                   </div>`;
 
@@ -500,9 +469,9 @@ const mapelements = {
 
                   <div class="card answer" id=${answer.answer_id}>
                       <div>
-                        <img class="vote upvote" id=${answer.answer_id} vote="1" src="../images/upvote.png" alt="vote">
+                        <img class="vote upvote" id=${answer.answer_id} name="1" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)">
                         <h2 style="text-align:center;color:grey;">${answer.votes}</h2>
-                        <img class="vote downvote" id=${answer.answer_id} vote="2" src="../images/upvote.png" alt="vote">
+                        <img class="vote downvote" id=${answer.answer_id} name="2" src="../images/upvote.png" alt="vote" onclick="answerFunctions.vote(id,name)">
                       </div>
 
                       <div>
@@ -524,13 +493,13 @@ const mapelements = {
   mapMyQuestions: (data) => {
                   data.forEach(question => {
                     const element = `
-                    <div class="card questions" id=${question.question_id}>
+                    <div class="card questions" id=${question.question_id} onclick="answers.questionanswers(id)">
                         <p> ${question.question_description}? </p>
                           <h6>                         
                               <p>Posted by: YOU on: ${question.created_at}</p>
                               <a>Answers: ${question.answers.length}</a><br>
-                              <button class="button delete question" id="${question.question_id}">Delete</button>
-                              <button class="button edit question" id="${question.question_id}" description="${question.question_description}" >Edit</button>
+                              <button class="button delete question" id="${question.question_id}" onclick="Delete.questionpopup(id)">Delete</button>
+                              <button class="button edit question" id="${question.question_id}" value="${question.question_description}" onclick="edit.editquestionpopup(id,value)">Edit</button>
                           </h6>
                     </div>
                   `;
